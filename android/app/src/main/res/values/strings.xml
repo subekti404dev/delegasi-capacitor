@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">delegasi-capacitor</string>
+    <string name="title_activity_main">delegasi-capacitor</string>
+    <string name="package_name">com.delegasi.capacitor</string>
+    <string name="custom_url_scheme">com.delegasi.capacitor</string>
+</resources>
