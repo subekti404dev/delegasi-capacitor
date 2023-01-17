@@ -1,24 +1,25 @@
-import { Capacitor, Plugins } from '@capacitor/core';
-import type { DatePickerPluginInterface } from '@capacitor-community/date-picker';
-import { Button, Container } from '@chakra-ui/react';
-import { useEffect } from 'react';
-import { Share } from '@capacitor/share';
-import { SplashScreen } from '@capacitor/splash-screen';
-import { ActionSheet, ActionSheetButtonStyle } from '@capacitor/action-sheet';
-import { Camera, CameraResultType } from '@capacitor/camera';
-import { Link } from 'react-router-dom';
+import { Capacitor, Plugins } from "@capacitor/core";
+import type { DatePickerPluginInterface } from "@capacitor-community/date-picker";
+import { Button, Container, Flex } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { Share } from "@capacitor/share";
+import { SplashScreen } from "@capacitor/splash-screen";
+import { ActionSheet, ActionSheetButtonStyle } from "@capacitor/action-sheet";
+import { Camera, CameraResultType } from "@capacitor/camera";
+import { Link, useNavigate } from "react-router-dom";
+import AppUrlListener from "~/components/appUrlListener";
 
 const DatePicker: DatePickerPluginInterface = Plugins.DatePickerPlugin as any;
-const selectedTheme = 'light';
+const selectedTheme = "light";
 
 export default function Index() {
   // Date Picker
   const openPicker = () => {
     DatePicker.present({
-      mode: 'date',
-      locale: 'pt_BR',
-      format: 'dd/MM/yyyy',
-      date: '13/07/2019',
+      mode: "date",
+      locale: "pt_BR",
+      format: "dd/MM/yyyy",
+      date: "13/07/2019",
       theme: selectedTheme,
     }).then((date) => alert(date.value));
   };
@@ -26,10 +27,10 @@ export default function Index() {
   // Share
   const shareSomething = async () => {
     await Share.share({
-      title: 'See cool stuff',
-      text: 'Really awesome thing you need to see right meow',
-      url: 'http://ionicframework.com/',
-      dialogTitle: 'Share with buddies',
+      title: "See cool stuff",
+      text: "Really awesome thing you need to see right meow",
+      url: "http://ionicframework.com/",
+      dialogTitle: "Share with buddies",
     });
   };
 
@@ -52,23 +53,23 @@ export default function Index() {
 
   const showActions = async () => {
     const result = await ActionSheet.showActions({
-      title: 'Photo Options',
-      message: 'Select an option to perform',
+      title: "Photo Options",
+      message: "Select an option to perform",
       options: [
         {
-          title: 'Upload',
+          title: "Upload",
         },
         {
-          title: 'Share',
+          title: "Share",
         },
         {
-          title: 'Remove',
+          title: "Remove",
           style: ActionSheetButtonStyle.Destructive,
         },
       ],
     });
 
-    console.log('Action Sheet result:', result);
+    console.log("Action Sheet result:", result);
   };
 
   const takePicture = async () => {
@@ -93,14 +94,38 @@ export default function Index() {
     // registerNotifications();
   }, []);
 
+  const navigate = useNavigate();
+
   return (
-    <Container>
-      <Button onClick={openPicker}>Open Picker</Button>
-      <Button onClick={shareSomething}>Share Something</Button>
-      <Button onClick={showActions}>Show Actions</Button>
-      <Button onClick={takePicture}>Take Picture</Button>
-      <Link to="/push-notification">Notification</Link>
-      <div>{Capacitor.isNativePlatform() ? 'Native' : 'Bukan Native'}</div>
-    </Container>
+    <AppUrlListener>
+      <Container
+        py={10}
+        h={"100vh"}
+        color={"#c5c7c8"}
+        backgroundColor={"#141919"}
+      >
+        <Flex direction={"column"}>
+          <Button onClick={openPicker} mb={2}>
+            Open Picker
+          </Button>
+          <Button onClick={shareSomething} mb={2}>
+            Share Something
+          </Button>
+          <Button onClick={showActions} mb={2}>
+            Show Actions
+          </Button>
+          <Button onClick={takePicture} mb={2}>
+            Take Picture
+          </Button>
+          <Button onClick={() => navigate("/push-notification")} mb={2}>
+            Notification
+          </Button>
+          <Button onClick={() => navigate("/deeplink")} mb={2}>
+            Deeplink Page
+          </Button>
+        </Flex>
+        <div>{Capacitor.isNativePlatform() ? "Native" : "Bukan Native"}</div>
+      </Container>
+    </AppUrlListener>
   );
 }
