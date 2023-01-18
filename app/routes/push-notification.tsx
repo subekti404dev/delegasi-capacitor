@@ -1,26 +1,27 @@
-import { Button, Flex, Input, useClipboard } from '@chakra-ui/react';
-import axios from 'axios';
-import { PushNotifications } from '@capacitor/push-notifications';
-import { useEffect, useState } from 'react';
+import { Button, Container, Flex, Input, useClipboard } from "@chakra-ui/react";
+import axios from "axios";
+import { PushNotifications } from "@capacitor/push-notifications";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const registerNotifications = async () => {
   let permStatus = await PushNotifications.checkPermissions();
 
-  if (permStatus.receive === 'prompt') {
+  if (permStatus.receive === "prompt") {
     permStatus = await PushNotifications.requestPermissions();
   }
 
-  if (permStatus.receive !== 'granted') {
-    throw new Error('User denied permissions!');
+  if (permStatus.receive !== "granted") {
+    throw new Error("User denied permissions!");
   }
 
   await PushNotifications.register();
 };
 
 export default function PushNotification() {
-  const { onCopy, value, setValue, hasCopied } = useClipboard('');
-  const [titleContent, setTitle] = useState('');
-  const [messageContent, setMessage] = useState('');
+  const { onCopy, value, setValue, hasCopied } = useClipboard("");
+  const [titleContent, setTitle] = useState("");
+  const [messageContent, setMessage] = useState("");
 
   //   const getDeliveredNotifications = async () => {
   //     const notificationList =
@@ -31,9 +32,9 @@ export default function PushNotification() {
   const sendNotifications = async () => {
     try {
       const resp = await axios.post(
-        'https://fcm.googleapis.com/fcm/send',
+        "https://fcm.googleapis.com/fcm/send",
         {
-          name: 'test',
+          name: "test",
           to: value,
           notification: {
             body: messageContent,
@@ -43,38 +44,38 @@ export default function PushNotification() {
         {
           headers: {
             Authorization:
-              'key=AAAAR9dLMI4:APA91bFLnNPXFinsH6CYSW75DjBgFEtLQU_iHi0yYJWE_jEuCWTSYOkdOBT3g0Eh_gB7QvslFAvM2DGudIxN4ClnjeWOvuiSlcr2L5cCYAk-o3V_x_7ow9YkkkCXRT2Cz-zLvwAECGrW',
+              "key=AAAAR9dLMI4:APA91bFLnNPXFinsH6CYSW75DjBgFEtLQU_iHi0yYJWE_jEuCWTSYOkdOBT3g0Eh_gB7QvslFAvM2DGudIxN4ClnjeWOvuiSlcr2L5cCYAk-o3V_x_7ow9YkkkCXRT2Cz-zLvwAECGrW",
           },
         }
       );
-      console.log(resp, 'resp');
+      console.log(resp, "resp");
     } catch (err) {
       console.error(err);
     }
   };
 
   const addListeners = async () => {
-    await PushNotifications.addListener('registration', (token) => {
+    await PushNotifications.addListener("registration", (token) => {
       setValue(token.value);
-      console.info('Registration token: ', token.value);
+      console.info("Registration token: ", token.value);
     });
 
-    await PushNotifications.addListener('registrationError', (err) => {
-      console.error('Registration error: ', err.error);
+    await PushNotifications.addListener("registrationError", (err) => {
+      console.error("Registration error: ", err.error);
     });
 
     await PushNotifications.addListener(
-      'pushNotificationReceived',
+      "pushNotificationReceived",
       (notification) => {
-        console.log('Push notification received: ', notification);
+        console.log("Push notification received: ", notification);
       }
     );
 
     await PushNotifications.addListener(
-      'pushNotificationActionPerformed',
+      "pushNotificationActionPerformed",
       (notification) => {
         console.log(
-          'Push notification action performed',
+          "Push notification action performed",
           notification.actionId,
           notification.inputValue
         );
@@ -88,7 +89,13 @@ export default function PushNotification() {
   }, []);
 
   return (
-    <div>
+    <Container
+      py={10}
+      h={"100vh"}
+      color={"#c5c7c8"}
+      backgroundColor={"#141919"}
+    >
+      <Link to={"/"}>Back</Link>
       <Flex mb={2}>
         <Input
           value={value}
@@ -98,7 +105,7 @@ export default function PushNotification() {
           readOnly
           mr={2}
         />
-        <Button onClick={onCopy}>{hasCopied ? 'Copied!' : 'Copy'}</Button>
+        <Button onClick={onCopy}>{hasCopied ? "Copied!" : "Copy"}</Button>
       </Flex>
       <Input
         value={titleContent}
@@ -111,6 +118,6 @@ export default function PushNotification() {
         onChange={(e) => setMessage(e.target.value)}
       />
       <Button onClick={sendNotifications}>Send Notification</Button>
-    </div>
+    </Container>
   );
 }
