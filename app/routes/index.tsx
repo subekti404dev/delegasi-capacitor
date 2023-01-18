@@ -6,7 +6,7 @@ import { Share } from "@capacitor/share";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { ActionSheet, ActionSheetButtonStyle } from "@capacitor/action-sheet";
 import { Camera, CameraResultType } from "@capacitor/camera";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, createSearchParams } from "react-router-dom";
 import AppUrlListener from "~/components/appUrlListener";
 
 const DatePicker: DatePickerPluginInterface = Plugins.DatePickerPlugin as any;
@@ -14,11 +14,6 @@ const selectedTheme = "light";
 declare var cordova: any;
 
 export default function Index() {
-  const [data, setData] = useState<any>([]);
-
-  useEffect(() => setupOpenwith(), []);
-  useEffect(() => console.log(data), [data]);
-
   const setupOpenwith = () => {
     const initSuccess = () => {
       console.log("init success!");
@@ -26,22 +21,39 @@ export default function Index() {
     const initError = (err: any) => {
       console.log("init failed: " + err);
     };
+    cordova.openwith.reset();
     cordova.openwith.init(initSuccess, initError);
 
     // Define your file handler
 
-    const myHandler = (intent: any) => {
+    const getBase64FromItem = async (item: any) => {
+      return new Promise((resolve, _) => {
+        return cordova.openwith.load(item, (_: any, obj: any) => {
+          resolve(`data:${obj.type};base64,${obj.base64}`);
+        });
+      });
+    };
+
+    const myHandler = async (intent: any) => {
       console.log("intent received");
 
       console.log("  action: " + intent.action); // type of action requested by the user
       console.log("  exit: " + intent.exit); // if true, you should exit the app after processing
 
-      for (var i = 0; i < intent.items.length; ++i) {
-        var item = intent.items[i];
-        cordova.openwith.load(item, (_: any, obj: any) => {
-          setData([...data, `data:${obj.type};base64,${obj.base64}`]);
-        });
+      const data = [];
+      for (const item of intent.items || []) {
+        const base64 = await getBase64FromItem(item);
+        data.push(base64);
       }
+
+      console.log(data);
+
+      navigate({
+        pathname: "/import",
+        search: createSearchParams({
+          data: JSON.stringify(data),
+        }).toString(),
+      });
 
       if (intent.exit) {
         cordova.openwith.exit();
@@ -132,6 +144,10 @@ export default function Index() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setupOpenwith();
+  });
+
   return (
     <AppUrlListener>
       <Container
@@ -159,9 +175,11 @@ export default function Index() {
           <Button onClick={() => navigate("/deeplink")} mb={2}>
             Deeplink Page
           </Button>
+          <Button onClick={() => navigate("/import")} mb={2}>
+            Import Page
+          </Button>
         </Flex>
         <div>{Capacitor.isNativePlatform() ? "Native" : "Bukan Native"}</div>
-        {data.length > 0 && <Image src={data?.[0]} />}
       </Container>
     </AppUrlListener>
   );
