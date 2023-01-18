@@ -1,7 +1,7 @@
 import { Capacitor, Plugins } from "@capacitor/core";
 import type { DatePickerPluginInterface } from "@capacitor-community/date-picker";
-import { Button, Container, Flex } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { Button, Container, Flex, Image } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Share } from "@capacitor/share";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { ActionSheet, ActionSheetButtonStyle } from "@capacitor/action-sheet";
@@ -11,8 +11,44 @@ import AppUrlListener from "~/components/appUrlListener";
 
 const DatePicker: DatePickerPluginInterface = Plugins.DatePickerPlugin as any;
 const selectedTheme = "light";
+declare var cordova: any;
 
 export default function Index() {
+  const [data, setData] = useState<any>([]);
+
+  useEffect(() => setupOpenwith(), []);
+  useEffect(() => console.log(data), [data]);
+
+  const setupOpenwith = () => {
+    const initSuccess = () => {
+      console.log("init success!");
+    };
+    const initError = (err: any) => {
+      console.log("init failed: " + err);
+    };
+    cordova.openwith.init(initSuccess, initError);
+
+    // Define your file handler
+
+    const myHandler = (intent: any) => {
+      console.log("intent received");
+
+      console.log("  action: " + intent.action); // type of action requested by the user
+      console.log("  exit: " + intent.exit); // if true, you should exit the app after processing
+
+      for (var i = 0; i < intent.items.length; ++i) {
+        var item = intent.items[i];
+        cordova.openwith.load(item, (_: any, obj: any) => {
+          setData([...data, `data:${obj.type};base64,${obj.base64}`]);
+        });
+      }
+
+      if (intent.exit) {
+        cordova.openwith.exit();
+      }
+    };
+    cordova.openwith.addHandler(myHandler);
+  };
   // Date Picker
   const openPicker = () => {
     DatePicker.present({
@@ -125,6 +161,7 @@ export default function Index() {
           </Button>
         </Flex>
         <div>{Capacitor.isNativePlatform() ? "Native" : "Bukan Native"}</div>
+        {data.length > 0 && <Image src={data?.[0]} />}
       </Container>
     </AppUrlListener>
   );

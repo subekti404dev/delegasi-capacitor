@@ -30,6 +30,12 @@
                 <data android:scheme="https" android:host="test-delegasi.urip13.duckdns.org" />
             </intent-filter>
 
+            <intent-filter>
+                <data android:mimeType="image/*"/>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
         </activity>
 
         <provider
