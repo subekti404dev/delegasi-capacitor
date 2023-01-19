@@ -1109,6 +1109,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/splash-screen/-/splash-screen-4.1.2.tgz#45f3bfd7653bed63a0a931550a1e891a03b789e8"
   integrity sha512-uw37mfFtpXH6lBG0Lz6/ZRvbnn1XZ0lVOL7UHylvW4C/BUJRKHqPloCXNMeSBGuBkf5WdW7sdmKdGdp4J5fU9g==
 
+"@capacitor/toast@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@capacitor/toast/-/toast-4.1.0.tgz#1710163aa128f8640d2237587cfb49ad4ee880c5"
+  integrity sha512-hU3GoA1dT+dsMuDOlEeiaU2mdd4VCLvIzgbp7Vk0Mqy9tbg++W4t7hcewlawzJGs6FxH59rIekf2lz7m4ir33w==
+
 "@chakra-ui/accordion@2.1.7":
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-2.1.7.tgz#e0bf3da9defd52d65c6e3782ac8dd02ddbf19f7c"

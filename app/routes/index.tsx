@@ -170,7 +170,10 @@ export default function Index() {
             Take Picture
           </Button>
           <Button onClick={() => navigate("/push-notification")} mb={2}>
-            Notification
+            Push Notification
+          </Button>
+          <Button onClick={() => navigate("/inapp-notification")} mb={2}>
+            InApp Notification
           </Button>
           <Button onClick={() => navigate("/deeplink")} mb={2}>
             Deeplink Page

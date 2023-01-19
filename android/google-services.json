@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "308554707086",
+    "project_id": "delegasi-capacitor",
+    "storage_bucket": "delegasi-capacitor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308554707086:android:59fa9b87835809584619df",
+        "android_client_info": {
+          "package_name": "com.delegasi.capacitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "308554707086-mlnvo6gbjsn2c58nu88f0964hled6lj1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAv5JR544OG3mxhIhqcS5jttboM07Tm_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "308554707086-mlnvo6gbjsn2c58nu88f0964hled6lj1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
