@@ -8,12 +8,41 @@ import { ActionSheet, ActionSheetButtonStyle } from "@capacitor/action-sheet";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { useNavigate, createSearchParams } from "react-router-dom";
 import AppUrlListener from "~/components/appUrlListener";
+import axios from "axios";
 
 const DatePicker: DatePickerPluginInterface = Plugins.DatePickerPlugin as any;
 const selectedTheme = "light";
 declare var cordova: any;
 
 export default function Index() {
+  const [bgColor, setBgColor] = useState("#141919");
+
+  useEffect(() => {
+    getBgColorFromApi();
+  }, []);
+
+  const getBgColorFromApi = async () => {
+    try {
+      const resp = await axios.get("/api/bg-color");
+      // console.log(resp.data);
+      setBgColor(resp.data.bgColor);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const setBgColorToApi = async (bgColor: string) => {
+    try {
+      const resp = await axios.post("/api/bg-color", {
+        bgColor,
+      });
+      // console.log(resp.data);
+      setBgColor(resp.data.bgColor);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const setupOpenwith = () => {
     const initSuccess = () => {
       console.log("init success!");
@@ -145,8 +174,18 @@ export default function Index() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setupOpenwith();
+    Capacitor.isNativePlatform() && setupOpenwith();
   });
+
+  const changeBgColor = async () => {
+    if (bgColor === "#141919") {
+      setBgColor("#276666");
+      await setBgColorToApi("#276666");
+    } else {
+      setBgColor("#141919");
+      await setBgColorToApi("#141919");
+    }
+  };
 
   return (
     <AppUrlListener>
@@ -154,7 +193,7 @@ export default function Index() {
         py={10}
         h={"100vh"}
         color={"#c5c7c8"}
-        backgroundColor={"#141919"}
+        backgroundColor={bgColor}
       >
         <Flex direction={"column"}>
           <Button onClick={openPicker} mb={2}>
@@ -180,6 +219,12 @@ export default function Index() {
           </Button>
           <Button onClick={() => navigate("/import")} mb={2}>
             Import Page
+          </Button>
+          <Button onClick={changeBgColor} mb={2}>
+            Change BgColor
+          </Button>
+          <Button onClick={() => navigate(0)} mb={2}>
+            Refresh
           </Button>
         </Flex>
         <div>{Capacitor.isNativePlatform() ? "Native" : "Bukan Native"}</div>
